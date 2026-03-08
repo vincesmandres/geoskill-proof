@@ -2,5 +2,7 @@
   "student_id": "andres01",
   "practice_id": "granulo-001",
   "total_sample_mass": 300,
-  "retained_masses": [125, 75, 45, 35, 20]
+  "retained_masses": [125, 75, 45, 35, 20],
+  "fines_percent": 8.5,
+  "preparation_method": "wet"
 }
