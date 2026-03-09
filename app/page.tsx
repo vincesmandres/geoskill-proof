@@ -76,67 +76,69 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Main content grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Left: Data Table */}
-          <section className="bg-white p-6 border border-border">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-              <span className="w-6 h-0.5 bg-accent"></span>
-              Datos del Ensayo
-            </h2>
-            <GranulometryTable
-              totalSampleMass={formData.totalSampleMass}
-              retainedMasses={formData.retainedMasses}
-              onTotalMassChange={handleTotalMassChange}
-              onMassChange={handleMassChange}
-              result={result}
-            />
+        {/* Main content: Table and Chart together */}
+        <section className="bg-white border border-border">
+          <div className="grid lg:grid-cols-2 gap-0">
+            {/* Left: Data Table */}
+            <div className="p-6 border-r border-border">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
+                <span className="w-6 h-0.5 bg-accent"></span>
+                Datos del Ensayo
+              </h2>
+              <GranulometryTable
+                totalSampleMass={formData.totalSampleMass}
+                retainedMasses={formData.retainedMasses}
+                onTotalMassChange={handleTotalMassChange}
+                onMassChange={handleMassChange}
+                result={result}
+              />
 
-            {/* Sign button */}
-            {connected && result?.validMassBalance && !signed && (
-              <button
-                onClick={handleSign}
-                disabled={signing}
-                className="w-full mt-6 py-3 bg-accent text-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-              >
-                {signing ? "Firmando..." : "Firmar con Wallet"}
-              </button>
-            )}
+              {/* Sign button */}
+              {connected && result?.validMassBalance && !signed && (
+                <button
+                  onClick={handleSign}
+                  disabled={signing}
+                  className="w-full mt-6 py-3 bg-accent text-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {signing ? "Firmando..." : "Firmar con Wallet"}
+                </button>
+              )}
 
-            {signed && (
-              <div className="mt-6 flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-3">
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Practica firmada y registrada exitosamente
-              </div>
-            )}
-          </section>
-
-          {/* Right: Granulometry Chart */}
-          <section className="bg-white p-6 border border-border">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-              <span className="w-6 h-0.5 bg-accent"></span>
-              Curva Granulometrica
-            </h2>
-            <div className="h-[400px]">
-              {result ? (
-                <GranulometryChart passingPercentages={result.passingPercentages} />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center">
-                  <div className="w-16 h-16 bg-muted flex items-center justify-center mb-4">
-                    <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                    </svg>
-                  </div>
-                  <p className="text-muted-foreground text-sm">
-                    La curva granulometrica aparecera aqui cuando ingreses los datos.
-                  </p>
+              {signed && (
+                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-3">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Practica firmada y registrada exitosamente
                 </div>
               )}
             </div>
-          </section>
-        </div>
+
+            {/* Right: Granulometry Chart */}
+            <div className="p-6">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
+                <span className="w-6 h-0.5 bg-accent"></span>
+                Curva Granulometrica
+              </h2>
+              <div className="h-[400px]">
+                {result ? (
+                  <GranulometryChart passingPercentages={result.passingPercentages} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <div className="w-16 h-16 bg-muted flex items-center justify-center mb-4">
+                      <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                      </svg>
+                    </div>
+                    <p className="text-muted-foreground text-sm">
+                      La curva granulometrica aparecera aqui cuando ingreses los datos.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   )

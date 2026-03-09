@@ -22,7 +22,7 @@ export function GranulometryChart({ passingPercentages }: GranulometryChartProps
   const data = SIEVE_SIZES.map((size, index) => ({
     size,
     passing: passingPercentages[index] ?? 0,
-  })).reverse() // Reverse to show smallest to largest on chart
+  })) // No reverse - keep larger to smaller
 
   return (
     <div className="w-full h-full min-h-[300px]">
