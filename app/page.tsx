@@ -76,26 +76,10 @@ export default function Home() {
           </p>
         </div>
 
-        {/* Connect wallet prompt */}
-        {!connected && (
-          <div className="mb-8 p-6 bg-muted/50 rounded-xl border border-border text-center">
-            <p className="text-muted-foreground mb-4">
-              Conecta tu wallet para poder firmar y registrar tus practicas en blockchain.
-            </p>
-            <button
-              onClick={connect}
-              disabled={connecting}
-              className="px-6 py-3 bg-accent text-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-            >
-              {connecting ? "Conectando..." : "Conectar Wallet"}
-            </button>
-          </div>
-        )}
-
         {/* Main content grid */}
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Left: Data Table */}
-          <section className="bg-white p-6 rounded-xl border border-border">
+          <section className="bg-white p-6 border border-border">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
               <span className="w-6 h-0.5 bg-accent"></span>
               Datos del Ensayo
@@ -113,14 +97,14 @@ export default function Home() {
               <button
                 onClick={handleSign}
                 disabled={signing}
-                className="w-full mt-6 py-3 bg-accent text-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="w-full mt-6 py-3 bg-accent text-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
               >
                 {signing ? "Firmando..." : "Firmar con Wallet"}
               </button>
             )}
 
             {signed && (
-              <div className="mt-6 flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-3 rounded-lg">
+              <div className="mt-6 flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-3">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
@@ -130,7 +114,7 @@ export default function Home() {
           </section>
 
           {/* Right: Granulometry Chart */}
-          <section className="bg-white p-6 rounded-xl border border-border">
+          <section className="bg-white p-6 border border-border">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
               <span className="w-6 h-0.5 bg-accent"></span>
               Curva Granulometrica
@@ -140,7 +124,7 @@ export default function Home() {
                 <GranulometryChart passingPercentages={result.passingPercentages} />
               ) : (
                 <div className="flex flex-col items-center justify-center h-full text-center">
-                  <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 bg-muted flex items-center justify-center mb-4">
                     <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
                     </svg>

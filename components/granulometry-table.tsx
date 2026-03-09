@@ -28,7 +28,7 @@ export function GranulometryTable({
   return (
     <div className="space-y-6">
       {/* Total mass input */}
-      <div className="flex items-center gap-4 p-4 bg-muted/50 rounded-lg">
+      <div className="flex items-center gap-4 p-4 bg-muted/50">
         <label className="text-sm font-medium text-foreground whitespace-nowrap">
           Masa total de muestra:
         </label>
@@ -36,13 +36,13 @@ export function GranulometryTable({
           type="number"
           value={totalSampleMass}
           onChange={(e) => onTotalMassChange(Number(e.target.value) || 0)}
-          className="w-32 bg-white border border-border rounded-lg px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-right"
+          className="w-32 bg-white border border-border px-3 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all text-right"
         />
         <span className="text-sm text-muted-foreground">g</span>
       </div>
 
       {/* Main data table */}
-      <div className="overflow-hidden rounded-lg border border-border bg-white">
+      <div className="overflow-hidden border border-border bg-white">
         <table className="w-full text-sm">
           <thead>
             <tr className="bg-foreground text-white">
@@ -65,7 +65,7 @@ export function GranulometryTable({
                     type="number"
                     value={retainedMasses[i]}
                     onChange={(e) => onMassChange(i, Number(e.target.value) || 0)}
-                    className="w-20 bg-muted border border-border rounded px-2 py-1 text-sm text-right focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+                    className="w-20 bg-muted border border-border px-2 py-1 text-sm text-right focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
                   />
                 </td>
                 <td className="py-3 px-4 text-right font-mono text-xs text-muted-foreground">
@@ -96,7 +96,7 @@ export function GranulometryTable({
       {result && (
         <div className="space-y-3">
           <div
-            className={`flex items-center gap-3 p-4 rounded-lg ${
+            className={`flex items-center gap-3 p-4 ${
               result.validMassBalance
                 ? "bg-green-50 border border-green-200"
                 : "bg-red-50 border border-red-200"
@@ -117,17 +117,17 @@ export function GranulometryTable({
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-muted/50 p-3 rounded-lg">
+            <div className="bg-muted/50 p-3">
               <span className="text-xs text-muted-foreground block">Error de masa</span>
               <span className="text-lg font-bold text-foreground">{result.pError}%</span>
             </div>
-            <div className="bg-muted/50 p-3 rounded-lg">
+            <div className="bg-muted/50 p-3">
               <span className="text-xs text-muted-foreground block">% Finos (fondo)</span>
               <span className="text-lg font-bold text-foreground">{result.finesPercent}%</span>
             </div>
           </div>
 
-          <p className="text-sm text-muted-foreground bg-muted/30 p-3 rounded-lg">
+          <p className="text-sm text-muted-foreground bg-muted/30 p-3">
             {result.methodStatus}
           </p>
         </div>

@@ -65,7 +65,7 @@ export function GranulometryChart({ passingPercentages }: GranulometryChartProps
             contentStyle={{
               backgroundColor: "hsl(var(--card))",
               border: "1px solid hsl(var(--border))",
-              borderRadius: "8px",
+              borderRadius: "0px",
               fontSize: "12px",
             }}
           />

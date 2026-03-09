@@ -27,7 +27,7 @@ export function Header() {
         <div className="relative" ref={menuRef}>
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 text-sm font-medium px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
+            className="flex items-center gap-2 text-sm font-medium px-4 py-2 border border-border hover:bg-muted transition-colors"
           >
             {menuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             <span>Menu</span>
@@ -35,7 +35,7 @@ export function Header() {
           </button>
           
           {menuOpen && (
-            <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-border rounded-lg shadow-lg overflow-hidden">
+            <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-border shadow-lg overflow-hidden">
               <button className="w-full px-4 py-3 text-left text-sm font-medium hover:bg-muted transition-colors">
                 Inicio
               </button>
@@ -52,7 +52,7 @@ export function Header() {
         {connected ? (
           <button
             onClick={disconnect}
-            className="text-sm font-medium px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors"
+            className="text-sm font-medium px-4 py-2 border border-border hover:bg-muted transition-colors"
           >
             {publicKey?.slice(0, 4)}...{publicKey?.slice(-4)}
           </button>
@@ -60,7 +60,7 @@ export function Header() {
           <button
             onClick={connect}
             disabled={connecting}
-            className="text-sm font-semibold px-5 py-2 bg-accent text-foreground rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="text-sm font-semibold px-5 py-2 bg-accent text-foreground hover:opacity-90 transition-opacity disabled:opacity-50"
           >
             {connecting ? "Conectando..." : "Conectar Wallet"}
           </button>
