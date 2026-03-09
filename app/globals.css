@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 25 5% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 25 5% 15%;
+  --primary: 25 5% 15%;
+  --primary-foreground: 0 0% 100%;
+  --muted: 40 10% 96%;
+  --muted-foreground: 25 5% 45%;
+  --border: 40 10% 90%;
+  --accent: 25 80% 55%;
+  --radius: 0.25rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 25 10% 10%;
+    --foreground: 40 10% 92%;
+    --card: 25 10% 12%;
+    --card-foreground: 40 10% 92%;
+    --primary: 40 10% 92%;
+    --primary-foreground: 25 10% 10%;
+    --muted: 25 10% 18%;
+    --muted-foreground: 40 10% 55%;
+    --border: 25 10% 20%;
+    --accent: 25 80% 55%;
+  }
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
+}
