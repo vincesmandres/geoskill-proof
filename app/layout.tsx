@@ -10,8 +10,8 @@ const poppins = Poppins({
 })
 
 export const metadata: Metadata = {
-  title: "GeoSkill",
-  description: "Verificacion de habilidades en blockchain",
+  title: "GeoSkill Proof",
+  description: "Academic verification platform powered by blockchain",
 }
 
 export const viewport: Viewport = {
