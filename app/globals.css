@@ -4,36 +4,30 @@
 
 :root {
   --background: 0 0% 100%;
-  --foreground: 220 15% 15%;
-  --card: 0 0% 98%;
-  --card-foreground: 220 15% 15%;
-  --primary: 220 70% 50%;
+  --foreground: 25 5% 15%;
+  --card: 0 0% 100%;
+  --card-foreground: 25 5% 15%;
+  --primary: 25 5% 15%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 220 10% 94%;
-  --secondary-foreground: 220 15% 25%;
-  --muted: 220 10% 96%;
-  --muted-foreground: 220 10% 45%;
-  --border: 220 10% 88%;
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 0 0% 100%;
-  --radius: 0.5rem;
+  --muted: 40 10% 96%;
+  --muted-foreground: 25 5% 45%;
+  --border: 40 10% 90%;
+  --accent: 25 80% 55%;
+  --radius: 0.25rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 220 15% 8%;
-    --foreground: 220 10% 96%;
-    --card: 220 15% 12%;
-    --card-foreground: 220 10% 96%;
-    --primary: 220 70% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 220 10% 85%;
-    --muted: 220 15% 15%;
-    --muted-foreground: 220 10% 55%;
-    --border: 220 15% 22%;
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --background: 25 10% 10%;
+    --foreground: 40 10% 92%;
+    --card: 25 10% 12%;
+    --card-foreground: 40 10% 92%;
+    --primary: 40 10% 92%;
+    --primary-foreground: 25 10% 10%;
+    --muted: 25 10% 18%;
+    --muted-foreground: 40 10% 55%;
+    --border: 25 10% 20%;
+    --accent: 25 80% 55%;
   }
 }
 
@@ -44,4 +38,6 @@
 body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+  -webkit-font-smoothing: antialiased;
 }

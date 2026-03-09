@@ -2,18 +2,17 @@
 
 import { useState } from "react"
 import { useWallet } from "@/components/wallet-provider"
-import { Loader2 } from "lucide-react"
 import { validateGranulometria } from "@/lib/validator"
 import type { PracticeData, ValidationResult } from "@/lib/types"
 
-const DEFAULT_SIEVES = ["4.75mm", "2.00mm", "0.850mm", "0.425mm", "Fondo"]
+const SIEVES = ["4.75mm", "2.00mm", "0.850mm", "0.425mm", "Fondo"]
 
 export function ValidationForm({
   onResult,
 }: {
   onResult: (result: ValidationResult | null) => void
 }) {
-  const { publicKey, connected, signMessage } = useWallet()
+  const { connected, signMessage } = useWallet()
   const [loading, setLoading] = useState(false)
   const [signed, setSigned] = useState(false)
 
@@ -32,14 +31,12 @@ export function ValidationForm({
 
   const handleValidate = async () => {
     if (!connected) return
-
     setLoading(true)
+    
     try {
-      // Validate data
       const result = validateGranulometria(formData)
       onResult(result)
 
-      // Sign result if validation passed
       if (result.validMassBalance) {
         const message = new TextEncoder().encode(
           JSON.stringify({
@@ -52,7 +49,7 @@ export function ValidationForm({
         if (signature) setSigned(true)
       }
     } catch (error) {
-      console.error("Validation error:", error)
+      console.error("Error:", error)
     } finally {
       setLoading(false)
     }
@@ -71,80 +68,66 @@ export function ValidationForm({
 
   if (!connected) {
     return (
-      <div className="rounded-lg border bg-card p-6 text-center">
-        <p className="text-muted-foreground">Conecta tu wallet para comenzar</p>
-      </div>
+      <p className="text-muted-foreground text-sm">
+        Conecta tu wallet para comenzar la validacion.
+      </p>
     )
   }
 
   return (
-    <div className="rounded-lg border bg-card p-6">
-      <h2 className="text-lg font-semibold mb-4 text-card-foreground">
-        G001: Curva Granulometrica
-      </h2>
-
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1 text-card-foreground">
-            Masa total de muestra (g)
-          </label>
-          <input
-            type="number"
-            value={formData.totalSampleMass}
-            onChange={(e) =>
-              setFormData({ ...formData, totalSampleMass: Number(e.target.value) })
-            }
-            className="w-full rounded border bg-background px-3 py-2 text-sm text-foreground"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2 text-card-foreground">
-            Masas retenidas por tamiz (g)
-          </label>
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-            {DEFAULT_SIEVES.map((sieve, index) => (
-              <div key={sieve}>
-                <label className="block text-xs text-muted-foreground mb-1">
-                  {sieve}
-                </label>
-                <input
-                  type="number"
-                  value={formData.retainedMasses[index]}
-                  onChange={(e) => handleMassChange(index, e.target.value)}
-                  className="w-full rounded border bg-background px-3 py-2 text-sm text-foreground"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex gap-2 pt-2">
-          <button
-            onClick={handleValidate}
-            disabled={loading}
-            className="flex-1 rounded bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
-          >
-            {loading ? (
-              <Loader2 className="mx-auto h-4 w-4 animate-spin" />
-            ) : (
-              "Validar Practica"
-            )}
-          </button>
-          <button
-            onClick={handleReset}
-            className="rounded border px-4 py-2 text-sm font-medium text-card-foreground hover:bg-muted"
-          >
-            Reiniciar
-          </button>
-        </div>
-
-        {signed && (
-          <p className="text-sm text-green-600 text-center">
-            Resultado firmado con tu wallet
-          </p>
-        )}
+    <div className="space-y-6">
+      <div>
+        <label className="block text-sm text-muted-foreground mb-2">
+          Masa total de muestra (g)
+        </label>
+        <input
+          type="number"
+          value={formData.totalSampleMass}
+          onChange={(e) =>
+            setFormData({ ...formData, totalSampleMass: Number(e.target.value) })
+          }
+          className="w-full max-w-xs bg-transparent border-b border-border px-0 py-2 text-sm focus:outline-none focus:border-foreground transition-colors"
+        />
       </div>
+
+      <div>
+        <label className="block text-sm text-muted-foreground mb-3">
+          Masas retenidas por tamiz (g)
+        </label>
+        <div className="space-y-3">
+          {SIEVES.map((sieve, index) => (
+            <div key={sieve} className="flex items-center gap-4">
+              <span className="text-sm text-muted-foreground w-20">{sieve}</span>
+              <input
+                type="number"
+                value={formData.retainedMasses[index]}
+                onChange={(e) => handleMassChange(index, e.target.value)}
+                className="w-24 bg-transparent border-b border-border px-0 py-1 text-sm focus:outline-none focus:border-foreground transition-colors"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center gap-4 pt-4">
+        <button
+          onClick={handleValidate}
+          disabled={loading}
+          className="text-sm px-4 py-2 bg-foreground text-background rounded hover:opacity-90 transition-opacity disabled:opacity-50"
+        >
+          {loading ? "Validando..." : "Validar"}
+        </button>
+        <button
+          onClick={handleReset}
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Reiniciar
+        </button>
+      </div>
+
+      {signed && (
+        <p className="text-sm text-accent">Firmado con wallet</p>
+      )}
     </div>
   )
 }

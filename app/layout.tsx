@@ -1,27 +1,21 @@
 import type { Metadata, Viewport } from "next"
-import { Inter, JetBrains_Mono } from "next/font/google"
+import { Inter } from "next/font/google"
 import "./globals.css"
 import { WalletProvider } from "@/components/wallet-provider"
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-sans",
 })
 
 export const metadata: Metadata = {
-  title: "GeoSkill Proof",
-  description: "Sistema de verificacion de habilidades geotecnicas en blockchain",
+  title: "GeoSkill",
+  description: "Verificacion de habilidades en blockchain",
 }
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#3b82f6",
 }
 
 export default function RootLayout({
@@ -30,8 +24,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="es" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="font-sans antialiased min-h-screen">
+    <html lang="es" className={inter.variable}>
+      <body className="font-sans antialiased">
         <WalletProvider>{children}</WalletProvider>
       </body>
     </html>
