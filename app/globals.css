@@ -4,30 +4,34 @@
 
 :root {
   --background: 0 0% 100%;
-  --foreground: 25 5% 15%;
-  --card: 0 0% 100%;
-  --card-foreground: 25 5% 15%;
-  --primary: 25 5% 15%;
+  --foreground: 220 13% 18%;
+  --card: 0 0% 97%;
+  --card-foreground: 220 13% 18%;
+  --primary: 220 13% 18%;
   --primary-foreground: 0 0% 100%;
-  --muted: 40 10% 96%;
-  --muted-foreground: 25 5% 45%;
-  --border: 40 10% 90%;
-  --accent: 25 80% 55%;
-  --radius: 0.25rem;
+  --secondary: 45 100% 51%;
+  --secondary-foreground: 220 13% 18%;
+  --muted: 220 10% 95%;
+  --muted-foreground: 220 10% 45%;
+  --border: 220 10% 88%;
+  --accent: 45 100% 51%;
+  --radius: 0.5rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 25 10% 10%;
-    --foreground: 40 10% 92%;
-    --card: 25 10% 12%;
-    --card-foreground: 40 10% 92%;
-    --primary: 40 10% 92%;
-    --primary-foreground: 25 10% 10%;
-    --muted: 25 10% 18%;
-    --muted-foreground: 40 10% 55%;
-    --border: 25 10% 20%;
-    --accent: 25 80% 55%;
+    --background: 220 15% 8%;
+    --foreground: 220 10% 95%;
+    --card: 220 15% 12%;
+    --card-foreground: 220 10% 95%;
+    --primary: 220 10% 95%;
+    --primary-foreground: 220 15% 8%;
+    --secondary: 45 100% 51%;
+    --secondary-foreground: 220 13% 18%;
+    --muted: 220 15% 18%;
+    --muted-foreground: 220 10% 60%;
+    --border: 220 15% 22%;
+    --accent: 45 100% 51%;
   }
 }
 
