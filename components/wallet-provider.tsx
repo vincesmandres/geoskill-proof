@@ -1,29 +1,71 @@
 "use client"
 
-import { useMemo, type ReactNode } from "react"
-import {
-  ConnectionProvider,
-  WalletProvider as SolanaWalletProvider,
-} from "@solana/wallet-adapter-react"
-import { WalletModalProvider } from "@solana/wallet-adapter-react-ui"
-import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets"
-import { clusterApiUrl } from "@solana/web3.js"
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
 
-import "@solana/wallet-adapter-react-ui/styles.css"
+interface WalletContextType {
+  publicKey: string | null
+  connected: boolean
+  connecting: boolean
+  connect: () => Promise<void>
+  disconnect: () => void
+  signMessage: (message: Uint8Array) => Promise<Uint8Array | null>
+}
+
+const WalletContext = createContext<WalletContextType | null>(null)
+
+export function useWallet() {
+  const context = useContext(WalletContext)
+  if (!context) throw new Error("useWallet must be used within WalletProvider")
+  return context
+}
 
 export function WalletProvider({ children }: { children: ReactNode }) {
-  const endpoint = useMemo(() => clusterApiUrl("devnet"), [])
+  const [publicKey, setPublicKey] = useState<string | null>(null)
+  const [connected, setConnected] = useState(false)
+  const [connecting, setConnecting] = useState(false)
 
-  const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
-    []
-  )
+  const connect = useCallback(async () => {
+    const phantom = (window as any).phantom?.solana
+    if (!phantom?.isPhantom) {
+      window.open("https://phantom.app/", "_blank")
+      return
+    }
+
+    setConnecting(true)
+    try {
+      const response = await phantom.connect()
+      setPublicKey(response.publicKey.toString())
+      setConnected(true)
+    } catch (err) {
+      console.error("Connection failed:", err)
+    } finally {
+      setConnecting(false)
+    }
+  }, [])
+
+  const disconnect = useCallback(() => {
+    const phantom = (window as any).phantom?.solana
+    phantom?.disconnect()
+    setPublicKey(null)
+    setConnected(false)
+  }, [])
+
+  const signMessage = useCallback(async (message: Uint8Array): Promise<Uint8Array | null> => {
+    const phantom = (window as any).phantom?.solana
+    if (!phantom) return null
+    
+    try {
+      const { signature } = await phantom.signMessage(message, "utf8")
+      return signature
+    } catch (err) {
+      console.error("Signing failed:", err)
+      return null
+    }
+  }, [])
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-      <SolanaWalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>{children}</WalletModalProvider>
-      </SolanaWalletProvider>
-    </ConnectionProvider>
+    <WalletContext.Provider value={{ publicKey, connected, connecting, connect, disconnect, signMessage }}>
+      {children}
+    </WalletContext.Provider>
   )
 }

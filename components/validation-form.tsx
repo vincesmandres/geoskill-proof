@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useWallet } from "@solana/wallet-adapter-react"
+import { useWallet } from "@/components/wallet-provider"
 import { Loader2 } from "lucide-react"
 import { validateGranulometria } from "@/lib/validator"
 import type { PracticeData, ValidationResult } from "@/lib/types"
@@ -13,7 +13,7 @@ export function ValidationForm({
 }: {
   onResult: (result: ValidationResult | null) => void
 }) {
-  const { publicKey, signMessage } = useWallet()
+  const { publicKey, connected, signMessage } = useWallet()
   const [loading, setLoading] = useState(false)
   const [signed, setSigned] = useState(false)
 
@@ -31,7 +31,7 @@ export function ValidationForm({
   }
 
   const handleValidate = async () => {
-    if (!publicKey) return
+    if (!connected) return
 
     setLoading(true)
     try {
@@ -39,8 +39,8 @@ export function ValidationForm({
       const result = validateGranulometria(formData)
       onResult(result)
 
-      // Sign result if wallet supports it
-      if (signMessage && result.validMassBalance) {
+      // Sign result if validation passed
+      if (result.validMassBalance) {
         const message = new TextEncoder().encode(
           JSON.stringify({
             practiceId: formData.practiceId,
@@ -48,8 +48,8 @@ export function ValidationForm({
             timestamp: Date.now(),
           })
         )
-        await signMessage(message)
-        setSigned(true)
+        const signature = await signMessage(message)
+        if (signature) setSigned(true)
       }
     } catch (error) {
       console.error("Validation error:", error)
@@ -69,7 +69,7 @@ export function ValidationForm({
     setSigned(false)
   }
 
-  if (!publicKey) {
+  if (!connected) {
     return (
       <div className="rounded-lg border bg-card p-6 text-center">
         <p className="text-muted-foreground">Conecta tu wallet para comenzar</p>
