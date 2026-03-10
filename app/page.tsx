@@ -1,144 +1,94 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { Header } from "@/components/header"
-import { GranulometryTable } from "@/components/granulometry-table"
-import { GranulometryChart } from "@/components/granulometry-chart"
-import { useWallet } from "@/components/wallet-provider"
-import { validateGranulometria } from "@/lib/validator"
-import type { PracticeData, ValidationResult } from "@/lib/types"
+
+const TESTS = [
+  {
+    level: "Básico",
+    tests: [
+      { name: "Granulometría", code: "T001", desc: "Análisis de distribución de tamaño de partículas" },
+      { name: "Límite Líquido", code: "T002", desc: "Determinación del límite de consistencia" },
+    ],
+  },
+  {
+    level: "Intermedio",
+    tests: [
+      { name: "Compresión Triaxial", code: "T003", desc: "Ensayo de resistencia al corte" },
+      { name: "Permeabilidad", code: "T004", desc: "Medición de conductividad hidráulica" },
+    ],
+  },
+  {
+    level: "Avanzado",
+    tests: [
+      { name: "Consolidación", code: "T005", desc: "Análisis de compresibilidad" },
+      { name: "Corte Directo", code: "T006", desc: "Determinación de parámetros de resistencia" },
+    ],
+  },
+]
 
 export default function Home() {
-  const { connected, signMessage, connect, connecting } = useWallet()
-  const [signed, setSigned] = useState(false)
-  const [signing, setSigning] = useState(false)
-
-  const [formData, setFormData] = useState<PracticeData>({
-    studentId: "",
-    practiceId: "granulo-001",
-    totalSampleMass: 300,
-    retainedMasses: [125, 75, 45, 35, 20],
-  })
-
-  // Calculate results in real-time
-  const result: ValidationResult | null = useMemo(() => {
-    const totalMasses = formData.retainedMasses.reduce((a, b) => a + b, 0)
-    if (totalMasses === 0 || formData.totalSampleMass === 0) return null
-    return validateGranulometria(formData)
-  }, [formData])
-
-  const handleTotalMassChange = useCallback((value: number) => {
-    setFormData((prev) => ({ ...prev, totalSampleMass: value }))
-    setSigned(false)
-  }, [])
-
-  const handleMassChange = useCallback((index: number, value: number) => {
-    setFormData((prev) => {
-      const newMasses = [...prev.retainedMasses]
-      newMasses[index] = value
-      return { ...prev, retainedMasses: newMasses }
-    })
-    setSigned(false)
-  }, [])
-
-  const handleSign = async () => {
-    if (!connected || !result?.validMassBalance) return
-    setSigning(true)
-    try {
-      const message = new TextEncoder().encode(
-        JSON.stringify({
-          practiceId: formData.practiceId,
-          score: result.score,
-          timestamp: Date.now(),
-        })
-      )
-      const signature = await signMessage(message)
-      if (signature) setSigned(true)
-    } catch (error) {
-      console.error("Error signing:", error)
-    } finally {
-      setSigning(false)
-    }
-  }
+  const router = useRouter()
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Title Section - Higher position */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3 text-foreground">
-            Verificacion de Practicas
+      <main className="max-w-7xl mx-auto px-6 py-16">
+        {/* Hero Section */}
+        <div className="text-center mb-20">
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-4 text-foreground">
+            GeoSkill Proof
           </h1>
-          <p className="text-base text-muted-foreground max-w-xl mx-auto">
-            Ingresa los datos de tu ensayo granulometrico y observa los resultados en tiempo real.
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
+            Plataforma de verificación académica para ensayos de geotecnia, respaldada por blockchain para garantizar la integridad y autenticidad de tus prácticas de laboratorio.
           </p>
+          <button
+            onClick={() => router.push("/test")}
+            className="px-8 py-4 bg-accent text-foreground font-semibold text-lg hover:opacity-90 transition-opacity"
+          >
+            Empezar
+          </button>
         </div>
 
-        {/* Main content: Table and Chart together */}
-        <section className="bg-white border border-border">
-          <div className="grid lg:grid-cols-2 gap-0">
-            {/* Left: Data Table */}
-            <div className="p-6 border-r border-border">
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-                <span className="w-6 h-0.5 bg-accent"></span>
-                Datos del Ensayo
-              </h2>
-              <GranulometryTable
-                totalSampleMass={formData.totalSampleMass}
-                retainedMasses={formData.retainedMasses}
-                onTotalMassChange={handleTotalMassChange}
-                onMassChange={handleMassChange}
-                result={result}
-              />
+        {/* Tests Schema */}
+        <div className="space-y-12">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground text-center mb-12">
+            Ensayos de Geotecnia por Niveles
+          </h2>
 
-              {/* Sign button */}
-              {connected && result?.validMassBalance && !signed && (
-                <button
-                  onClick={handleSign}
-                  disabled={signing}
-                  className="w-full mt-6 py-3 bg-accent text-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
-                >
-                  {signing ? "Firmando..." : "Firmar con Wallet"}
-                </button>
-              )}
-
-              {signed && (
-                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-3">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  Practica firmada y registrada exitosamente
-                </div>
-              )}
-            </div>
-
-            {/* Right: Granulometry Chart */}
-            <div className="p-6">
-              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
-                <span className="w-6 h-0.5 bg-accent"></span>
-                Curva Granulometrica
-              </h2>
-              <div className="h-[400px]">
-                {result ? (
-                  <GranulometryChart passingPercentages={result.passingPercentages} />
-                ) : (
-                  <div className="flex flex-col items-center justify-center h-full text-center">
-                    <div className="w-16 h-16 bg-muted flex items-center justify-center mb-4">
-                      <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
-                      </svg>
+          {TESTS.map((levelGroup) => (
+            <div key={levelGroup.level} className="space-y-4">
+              <h3 className="text-xl font-bold text-foreground uppercase tracking-wide">
+                {levelGroup.level}
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                {levelGroup.tests.map((test) => (
+                  <button
+                    key={test.code}
+                    onClick={() => test.code === "T001" && router.push("/test")}
+                    className={`p-6 border text-left transition-all ${
+                      test.code === "T001"
+                        ? "border-accent bg-white hover:bg-muted cursor-pointer"
+                        : "border-border opacity-60 cursor-not-allowed"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-semibold text-foreground">{test.name}</h4>
+                      <span className="text-xs font-bold text-accent">{test.code}</span>
                     </div>
-                    <p className="text-muted-foreground text-sm">
-                      La curva granulometrica aparecera aqui cuando ingreses los datos.
-                    </p>
-                  </div>
-                )}
+                    <p className="text-sm text-muted-foreground">{test.desc}</p>
+                    {test.code === "T001" && (
+                      <span className="inline-block mt-3 text-xs font-semibold text-accent">
+                        Disponible →
+                      </span>
+                    )}
+                  </button>
+                ))}
               </div>
             </div>
-          </div>
-        </section>
+          ))}
+        </div>
       </main>
     </div>
   )
