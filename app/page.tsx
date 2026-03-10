@@ -1,91 +1,145 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo, useCallback } from "react"
 import { Header } from "@/components/header"
-import { EssayCard } from "@/components/essay-card"
-import { ConceptsCard } from "@/components/concepts-card"
-import { VerificationTable } from "@/components/verification-table"
-import { ProgressChart } from "@/components/progress-chart"
+import { GranulometryTable } from "@/components/granulometry-table"
+import { GranulometryChart } from "@/components/granulometry-chart"
+import { useWallet } from "@/components/wallet-provider"
+import { validateGranulometria } from "@/lib/validator"
+import type { PracticeData, ValidationResult } from "@/lib/types"
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"essay" | "concepts">("essay")
+  const { connected, signMessage, connect, connecting } = useWallet()
+  const [signed, setSigned] = useState(false)
+  const [signing, setSigning] = useState(false)
+
+  const [formData, setFormData] = useState<PracticeData>({
+    studentId: "",
+    practiceId: "granulo-001",
+    totalSampleMass: 300,
+    retainedMasses: [125, 75, 45, 35, 20],
+  })
+
+  // Calculate results in real-time
+  const result: ValidationResult | null = useMemo(() => {
+    const totalMasses = formData.retainedMasses.reduce((a, b) => a + b, 0)
+    if (totalMasses === 0 || formData.totalSampleMass === 0) return null
+    return validateGranulometria(formData)
+  }, [formData])
+
+  const handleTotalMassChange = useCallback((value: number) => {
+    setFormData((prev) => ({ ...prev, totalSampleMass: value }))
+    setSigned(false)
+  }, [])
+
+  const handleMassChange = useCallback((index: number, value: number) => {
+    setFormData((prev) => {
+      const newMasses = [...prev.retainedMasses]
+      newMasses[index] = value
+      return { ...prev, retainedMasses: newMasses }
+    })
+    setSigned(false)
+  }, [])
+
+  const handleSign = async () => {
+    if (!connected || !result?.validMassBalance) return
+    setSigning(true)
+    try {
+      const message = new TextEncoder().encode(
+        JSON.stringify({
+          practiceId: formData.practiceId,
+          score: result.score,
+          timestamp: Date.now(),
+        })
+      )
+      const signature = await signMessage(message)
+      if (signature) setSigned(true)
+    } catch (error) {
+      console.error("Error signing:", error)
+    } finally {
+      setSigning(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-6 py-10">
-        {/* Main Title Section */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Title Section - Higher position */}
         <div className="text-center mb-10">
-          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-2 text-foreground">
-            GeoSkill Proof
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-3 text-foreground">
+            Verificacion de Practicas
           </h1>
-          <p className="text-base text-muted-foreground">
-            Academic verification powered by blockchain
+          <p className="text-base text-muted-foreground max-w-xl mx-auto">
+            Ingresa los datos de tu ensayo granulometrico y observa los resultados en tiempo real.
           </p>
         </div>
 
-        {/* Tab Section */}
-        <div className="flex items-center justify-center gap-2 mb-12 border-b border-border pb-0">
-          <button
-            onClick={() => setActiveTab("essay")}
-            className={`px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-all ${
-              activeTab === "essay"
-                ? "text-foreground border-b-2 border-accent"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Essay
-          </button>
-          <button
-            onClick={() => setActiveTab("concepts")}
-            className={`px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-all ${
-              activeTab === "concepts"
-                ? "text-foreground border-b-2 border-accent"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-          >
-            Concepts & Information
-          </button>
-        </div>
-
-        {/* Essay and Concepts Section */}
-        <div className="grid lg:grid-cols-2 gap-6 mb-12">
-          <EssayCard />
-          <ConceptsCard />
-        </div>
-
-        {/* Data Results Section */}
-        <div className="space-y-6">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-3">
-            <span className="w-8 h-0.5 bg-accent"></span>
-            Data Results
-          </h2>
-
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Verification Table */}
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+        {/* Main content: Table and Chart together */}
+        <section className="bg-white border border-border">
+          <div className="grid lg:grid-cols-2 gap-0">
+            {/* Left: Data Table */}
+            <div className="p-6 border-r border-border">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
                 <span className="w-6 h-0.5 bg-accent"></span>
-                Verification History
-              </h3>
-              <VerificationTable />
+                Datos del Ensayo
+              </h2>
+              <GranulometryTable
+                totalSampleMass={formData.totalSampleMass}
+                retainedMasses={formData.retainedMasses}
+                onTotalMassChange={handleTotalMassChange}
+                onMassChange={handleMassChange}
+                result={result}
+              />
+
+              {/* Sign button */}
+              {connected && result?.validMassBalance && !signed && (
+                <button
+                  onClick={handleSign}
+                  disabled={signing}
+                  className="w-full mt-6 py-3 bg-accent text-foreground font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                >
+                  {signing ? "Firmando..." : "Firmar con Wallet"}
+                </button>
+              )}
+
+              {signed && (
+                <div className="mt-6 flex items-center justify-center gap-2 text-sm text-green-600 bg-green-50 border border-green-200 px-4 py-3">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Practica firmada y registrada exitosamente
+                </div>
+              )}
             </div>
 
-            {/* Progress Chart */}
-            <div>
-              <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+            {/* Right: Granulometry Chart */}
+            <div className="p-6">
+              <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-6 flex items-center gap-2">
                 <span className="w-6 h-0.5 bg-accent"></span>
-                Verification Confidence
-              </h3>
-              <div className="bg-white border border-border p-6 h-80">
-                <ProgressChart />
+                Curva Granulometrica
+              </h2>
+              <div className="h-[400px]">
+                {result ? (
+                  <GranulometryChart passingPercentages={result.passingPercentages} />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-center">
+                    <div className="w-16 h-16 bg-muted flex items-center justify-center mb-4">
+                      <svg className="w-8 h-8 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                      </svg>
+                    </div>
+                    <p className="text-muted-foreground text-sm">
+                      La curva granulometrica aparecera aqui cuando ingreses los datos.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   )
 }
-
