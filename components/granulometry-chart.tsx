@@ -35,8 +35,9 @@ export function GranulometryChart({ passingPercentages }: GranulometryChartProps
           <XAxis
             dataKey="size"
             scale="log"
-            domain={[0.05, 10]}
+            domain={[10, 0.05]}
             type="number"
+            reversed={true}
             tickFormatter={(value) => value.toString()}
             label={{
               value: "Tamano de particula (mm)",
