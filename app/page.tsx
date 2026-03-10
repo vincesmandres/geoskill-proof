@@ -2,43 +2,90 @@
 
 import { useState } from "react"
 import { Header } from "@/components/header"
-import { ValidationForm } from "@/components/validation-form"
-import { ResultsDisplay } from "@/components/results-display"
-import type { ValidationResult } from "@/lib/types"
+import { EssayCard } from "@/components/essay-card"
+import { ConceptsCard } from "@/components/concepts-card"
+import { VerificationTable } from "@/components/verification-table"
+import { ProgressChart } from "@/components/progress-chart"
 
 export default function Home() {
-  const [result, setResult] = useState<ValidationResult | null>(null)
+  const [activeTab, setActiveTab] = useState<"essay" | "concepts">("essay")
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Header />
 
-      <main className="max-w-2xl mx-auto px-6 py-12">
-        <h1 className="text-3xl font-semibold tracking-tight mb-2">
-          Verificacion de Practicas
-        </h1>
-        <p className="text-muted-foreground mb-12">
-          Valida y registra tus practicas de laboratorio en blockchain.
-        </p>
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        {/* Main Title Section */}
+        <div className="text-center mb-10">
+          <h1 className="text-5xl md:text-6xl font-bold tracking-tight mb-2 text-foreground">
+            GeoSkill Proof
+          </h1>
+          <p className="text-base text-muted-foreground">
+            Academic verification powered by blockchain
+          </p>
+        </div>
 
-        <div className="space-y-12">
-          <section>
-            <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-6">
-              Datos de la practica
-            </h2>
-            <ValidationForm onResult={setResult} />
-          </section>
+        {/* Tab Section */}
+        <div className="flex items-center justify-center gap-2 mb-12 border-b border-border pb-0">
+          <button
+            onClick={() => setActiveTab("essay")}
+            className={`px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-all ${
+              activeTab === "essay"
+                ? "text-foreground border-b-2 border-accent"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Essay
+          </button>
+          <button
+            onClick={() => setActiveTab("concepts")}
+            className={`px-6 py-3 text-sm font-semibold uppercase tracking-wide transition-all ${
+              activeTab === "concepts"
+                ? "text-foreground border-b-2 border-accent"
+                : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            Concepts & Information
+          </button>
+        </div>
 
-          {result && (
-            <section>
-              <h2 className="text-xs uppercase tracking-wider text-muted-foreground mb-6">
-                Resultados
-              </h2>
-              <ResultsDisplay result={result} />
-            </section>
-          )}
+        {/* Essay and Concepts Section */}
+        <div className="grid lg:grid-cols-2 gap-6 mb-12">
+          <EssayCard />
+          <ConceptsCard />
+        </div>
+
+        {/* Data Results Section */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-3">
+            <span className="w-8 h-0.5 bg-accent"></span>
+            Data Results
+          </h2>
+
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Verification Table */}
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+                <span className="w-6 h-0.5 bg-accent"></span>
+                Verification History
+              </h3>
+              <VerificationTable />
+            </div>
+
+            {/* Progress Chart */}
+            <div>
+              <h3 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-4 flex items-center gap-2">
+                <span className="w-6 h-0.5 bg-accent"></span>
+                Verification Confidence
+              </h3>
+              <div className="bg-white border border-border p-6 h-80">
+                <ProgressChart />
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
   )
 }
+

@@ -8,7 +8,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)"],
+        sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
       },
       colors: {
@@ -25,6 +25,8 @@ const config: Config = {
         border: "hsl(var(--border))",
         destructive: "hsl(var(--destructive))",
         "destructive-foreground": "hsl(var(--destructive-foreground))",
+        accent: "hsl(var(--accent))",
+        "accent-foreground": "hsl(var(--secondary-foreground))",
       },
       borderRadius: {
         DEFAULT: "var(--radius)",
